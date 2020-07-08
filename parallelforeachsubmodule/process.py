@@ -33,16 +33,17 @@ class PFSProcess(object):
                              cwd=os.path.join(self.__path, self.__submodule))
 
         #print(self.__cmd)
-        #print(self.__p.communicate()[0].decode('utf-8'))
-        if self.__p.communicate()[0].decode('utf-8') != '':
-            self.__ret = self.__p.communicate()[0].decode('utf-8')  # stdoutdata
+        output, error = self.__p.communicate()
+        #print(output.decode('utf-8'))
+        if output.decode('utf-8') != '':
+            self.__ret = output.decode('utf-8')  # stdoutdata
             if self.__output_func:
                 self.__ret = self.__output_func(self.__ret)
             self.__output += self.__ret
             is_empty = False
 
-        if self.__p.communicate()[1]:  # stderrdata
-            self.__output += self.__p.communicate()[1].decode('utf-8')
+        if error:  # stderrdata
+            self.__output += error.decode('utf-8')
 
         self.__output += str(self.__counter.increment_value())
 
